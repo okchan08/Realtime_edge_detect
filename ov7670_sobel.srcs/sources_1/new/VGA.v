@@ -10,11 +10,11 @@ module VGA #(
     parameter V_PW = 5,
     parameter V_MAX = 1125,
     parameter BITS_WIDTH = 12,
-    parameter ADDR_WIDTH = 19,
+    parameter ADDR_WIDTH = 17,
     parameter PIX_WIDTH = 12,
     parameter VGABIT_WIDTH = 4,
-    parameter CAMERA_WIDTH = 640,
-    parameter CAMERA_HEIGHT = 480
+    parameter CAMERA_WIDTH = 320,
+    parameter CAMERA_HEIGHT = 240 
 )
 (
     input   wire    pix_clk,
@@ -113,14 +113,14 @@ module VGA #(
 
     // pixel address counter
     always @(posedge pix_clk) begin
-        frame_addr <= h_cnt + v_cnt * CAMERA_WIDTH;
+        //frame_addr <= h_cnt + v_cnt * CAMERA_WIDTH;
 	    if(v_cnt >= CAMERA_HEIGHT) begin
 	    	blank <= 1;
-	    	//frame_addr <= 0;
+	    	frame_addr <= 0;
 	    end else begin
 	    	if(h_cnt <  CAMERA_WIDTH) begin
 	    		blank <= 0;
-	    		//frame_addr <= frame_addr + 1;
+	    		frame_addr <= frame_addr + 1;
 	    	end else begin
 	    		blank <= 1;
 	    	end

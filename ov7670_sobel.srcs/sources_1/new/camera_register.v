@@ -44,7 +44,7 @@ module camera_register(
 		case ( address )
 			16'h00 :  send_reg <= 16'h_1280; //  COM7   Reset
 			16'h01 :  send_reg <= 16'h_1280; //  COM7   Reset
-			16'h02 :  send_reg <= 16'h_1204; //  COM7   Size & RGB output
+			16'h02 :  send_reg <= 16'h_1204; //  COM7   0x04 :Size & RGB output  0x10 : QVGA
 			//16'h03 :  send_reg <= 16'h_1100; //  CLKRC  Prescaler - Fin/(1+1)
 			16'h03 :  send_reg <= 16'h_1181; //  CLKRC  Prescaler - Fin/(1+1)
 			16'h04 :  send_reg <= 16'h_0C00; //  COM3   Lots of stuff, enable scaling, all others off

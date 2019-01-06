@@ -22,7 +22,7 @@
 
 module ov7670_sobel(
         input wire CLK,
-        input wire pclk,
+        (*mark_debug = "true"*) input wire pclk,
         input wire resend_in,
         input wire cntl_in,
         input wire [1:0] selector,
@@ -37,21 +37,21 @@ module ov7670_sobel(
         output wire power_down,
         output wire xclk,
         
-        (*mark_debug = "true"*) output wire [3:0] VGA_RED,
-        (*mark_debug = "true"*) output wire [3:0] VGA_BLUE,
-        (*mark_debug = "true"*) output wire [3:0] VGA_GREEN,
-        (*mark_debug = "true"*) output wire VGA_H_SYNC,
-        (*mark_debug = "true"*) output wire VGA_V_SYNC
+        output wire [3:0] VGA_RED,
+        output wire [3:0] VGA_BLUE,
+        output wire [3:0] VGA_GREEN,
+        output wire VGA_H_SYNC,
+        output wire VGA_V_SYNC
     );
     
     wire clk_12MHz;
     wire clk_148_5MHz;
     
-    wire [4:0] camera_red, camera_blue;
-    wire [5:0] camera_green;
+    (*mark_debug = "true" *) wire [4:0] camera_red, camera_blue;
+    (*mark_debug = "true" *) wire [5:0] camera_green;
     wire [9:0] camera_hcnt;
     wire [9:0] camera_vcnt;
-    wire [18:0] camera_addr;
+    (*mark_debug = "true" *) wire [18:0] camera_addr;
     
     wire [11:0] buffer_data;
     wire [18:0] frame_addr;
@@ -82,30 +82,42 @@ module ov7670_sobel(
         .xclk(xclk)
     );
     
-    camera_capture camera_capture(
-        .clk(pclk),
-        .rst(),
-        .href(camera_h_ref),
-        .vsync(camera_v_sync),
-        .data_in(din),
-        .data_en(video_buffer_wr_en),
-        .red_out(camera_red),
-        .green_out(camera_green),
-        .blue_out(camera_blue),
-        .hcnt_out(camera_hcnt),
-        .vcnt_out(camera_vcnt),
-        .addr_out(camera_addr)
+    //camera_capture camera_capture(
+    //    .clk(pclk),
+    //    .rst(),
+    //    .href(camera_h_ref),
+    //    .vsync(camera_v_sync),
+    //    .data_in(din),
+    //    .data_en(video_buffer_wr_en),
+    //    .red_out(camera_red),
+    //    .green_out(camera_green),
+    //    .blue_out(camera_blue),
+    //    .hcnt_out(camera_hcnt),
+    //    .vcnt_out(camera_vcnt),
+    //    .addr_out(camera_addr)
+    //);
+
+    camera_capture2 camera_capture2(
+        .pclk(pclk),
+        .camera_v_sync(camera_v_sync),
+        .camera_h_ref(camera_h_ref),
+        .din(din),
+        .addr(camera_addr),
+        .dout({camera_red[3:0], camera_green[3:0], camera_blue[3:0]}),
+        //.dout({camera_red, camera_green, camera_blue}),
+        .wr_en(video_buffer_wr_en)
     );
 
-//    camera_capture2 camera_capture2(
-//        .pclk(pclk),
-//        .camera_v_sync(camera_v_sync),
-//        .camera_h_ref(camera_h_ref),
-//        .din(din),
-//        .addr(camera_addr),
-//        .dout(camera_data),
-//        .wr_en(video_buffer_wr_en)
-//    );
+    //camera_capture3 camera_capture3(
+    //    .clk(pclk),
+    //    .rst(1'b0),
+    //    .href(camera_h_ref),
+    //    .vsync(camera_v_sync),
+    //    .data_in(din),
+    //    .data_en(video_buffer_wr_en),
+    //    .data_out({camera_red, camera_green, camera_blue}),
+    //    .address(camera_addr[16:0])
+    //);
         
     camera_bufs camera_bufs(
         .pclk(pclk),
@@ -130,13 +142,13 @@ module ov7670_sobel(
     );
         
     
-    video_buffer video_buffer (
+    video_buffer1 video_buffer (
       .clka(pclk),    // input wire clka
       .wea(video_buffer_wr_en),      // input wire [0 : 0] wea
-      .addra(camera_addr),  // input wire [18 : 0] addra
+      .addra(camera_addr[16:0]),  // input wire [18 : 0] addra
       .dina(video_buffer_din),    // input wire [11 : 0] dina
       .clkb(clk_148_5MHz),    // input wire clkb
-      .addrb(frame_addr),  // input wire [18 : 0] addrb
+      .addrb(frame_addr[16:0]),  // input wire [18 : 0] addrb
       .doutb(buffer_data)  // output wire [11 : 0] doutb
     );
     

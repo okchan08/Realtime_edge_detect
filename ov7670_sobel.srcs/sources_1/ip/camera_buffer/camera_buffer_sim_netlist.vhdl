@@ -3,8 +3,8 @@
 -- Tool Version: Vivado v.2017.2 (lin64) Build 1909853 Thu Jun 15 18:39:10 MDT 2017
 -- Date        : Sun Jan  6 01:26:02 2019
 -- Host        : yoshiki-FMVA77JRY running 64-bit Ubuntu 18.04.1 LTS
--- Command     : write_vhdl -force -mode funcsim
---               /home/yoshiki/xilinx/nexys4/ov7670_filter/vivado2/ov7670_sobel/ov7670_sobel.srcs/sources_1/ip/camera_buffer/camera_buffer_sim_netlist.vhdl
+-- Command     : write_vhdl -force -mode funcsim -rename_top camera_buffer -prefix
+--               camera_buffer_ camera_buffer_sim_netlist.vhdl
 -- Design      : camera_buffer
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -24,8 +24,6 @@ entity camera_buffer_blk_mem_gen_prim_wrapper is
     addrb : in STD_LOGIC_VECTOR ( 11 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 7 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of camera_buffer_blk_mem_gen_prim_wrapper : entity is "blk_mem_gen_prim_wrapper";
 end camera_buffer_blk_mem_gen_prim_wrapper;
 
 architecture STRUCTURE of camera_buffer_blk_mem_gen_prim_wrapper is
@@ -277,8 +275,6 @@ entity camera_buffer_blk_mem_gen_prim_width is
     addrb : in STD_LOGIC_VECTOR ( 11 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 7 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of camera_buffer_blk_mem_gen_prim_width : entity is "blk_mem_gen_prim_width";
 end camera_buffer_blk_mem_gen_prim_width;
 
 architecture STRUCTURE of camera_buffer_blk_mem_gen_prim_width is
@@ -308,8 +304,6 @@ entity camera_buffer_blk_mem_gen_generic_cstr is
     addrb : in STD_LOGIC_VECTOR ( 11 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 7 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of camera_buffer_blk_mem_gen_generic_cstr : entity is "blk_mem_gen_generic_cstr";
 end camera_buffer_blk_mem_gen_generic_cstr;
 
 architecture STRUCTURE of camera_buffer_blk_mem_gen_generic_cstr is
@@ -339,8 +333,6 @@ entity camera_buffer_blk_mem_gen_top is
     addrb : in STD_LOGIC_VECTOR ( 11 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 7 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of camera_buffer_blk_mem_gen_top : entity is "blk_mem_gen_top";
 end camera_buffer_blk_mem_gen_top;
 
 architecture STRUCTURE of camera_buffer_blk_mem_gen_top is
@@ -370,8 +362,6 @@ entity camera_buffer_blk_mem_gen_v8_3_6_synth is
     addrb : in STD_LOGIC_VECTOR ( 11 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 7 downto 0 )
   );
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of camera_buffer_blk_mem_gen_v8_3_6_synth : entity is "blk_mem_gen_v8_3_6_synth";
 end camera_buffer_blk_mem_gen_v8_3_6_synth;
 
 architecture STRUCTURE of camera_buffer_blk_mem_gen_v8_3_6_synth is
@@ -603,8 +593,6 @@ entity camera_buffer_blk_mem_gen_v8_3_6 is
   attribute C_WRITE_WIDTH_B of camera_buffer_blk_mem_gen_v8_3_6 : entity is 8;
   attribute C_XDEVICEFAMILY : string;
   attribute C_XDEVICEFAMILY of camera_buffer_blk_mem_gen_v8_3_6 : entity is "artix7";
-  attribute ORIG_REF_NAME : string;
-  attribute ORIG_REF_NAME of camera_buffer_blk_mem_gen_v8_3_6 : entity is "blk_mem_gen_v8_3_6";
   attribute downgradeipidentifiedwarnings : string;
   attribute downgradeipidentifiedwarnings of camera_buffer_blk_mem_gen_v8_3_6 : entity is "yes";
 end camera_buffer_blk_mem_gen_v8_3_6;

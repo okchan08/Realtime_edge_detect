@@ -51,12 +51,13 @@ module camera_capture2#(
 	// We have 3 color data, RGB, so that it takes 3 clks to receive one pix data from camera.
 	// When camera_v_sync == 1, the OV7670 starts to send the new video frame data
 	// when camera_h_ref == 1, the OV7670 starts to send the pix data starting from RED, GREEN, BLUE;
-
+    reg cnt;
 	always @(posedge pclk) begin
 		if(camera_v_sync == 1'b1) begin
 			address <= 0;
 			//address_next <= 0;
 			write_state <= 0;
+            cnt <= 0;
 		end else begin
 			dout <= {latced_data[15:12], latced_data[10:7], latced_data[4:1]};
 			//address <= address_next;
@@ -64,9 +65,12 @@ module camera_capture2#(
 			write_state <= {write_state[0], (camera_h_ref & ~write_state[0])};
 			latced_data <= {latced_data[DATA_IN_WIDTH-1:0], din};
 			if( write_state[1] == 1'b1) begin
-                wr_en <= 1'b1;
-	            address <= address + 1;
-				//address_next <= address_next + 1;
+                cnt <= ~cnt;
+                if(cnt && address < 320*240) begin
+                    wr_en <= 1'b1;
+	                address <= address + 1;
+				    //address_next <= address_next + 1;
+                end
 			end else
                 wr_en <= 1'b0;
 		end

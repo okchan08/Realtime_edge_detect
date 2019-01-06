@@ -1,7 +1,7 @@
 // Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2017.2 (lin64) Build 1909853 Thu Jun 15 18:39:10 MDT 2017
-// Date        : Sat Jan  5 23:18:08 2019
+// Date        : Sun Jan  6 06:56:43 2019
 // Host        : yoshiki-FMVA77JRY running 64-bit Ubuntu 18.04.1 LTS
 // Command     : write_verilog -force -mode synth_stub -rename_top clock_resource -prefix
 //               clock_resource_ clock_resource_stub.v

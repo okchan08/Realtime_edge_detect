@@ -1,10 +1,10 @@
 -- Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2017.2 (lin64) Build 1909853 Thu Jun 15 18:39:10 MDT 2017
--- Date        : Sat Jan  5 23:19:51 2019
+-- Date        : Sun Jan  6 05:22:46 2019
 -- Host        : yoshiki-FMVA77JRY running 64-bit Ubuntu 18.04.1 LTS
--- Command     : write_vhdl -force -mode synth_stub
---               /home/yoshiki/xilinx/nexys4/ov7670_filter/vivado2/ov7670_sobel/ov7670_sobel.srcs/sources_1/ip/video_buffer/video_buffer_stub.vhdl
+-- Command     : write_vhdl -force -mode synth_stub -rename_top video_buffer -prefix
+--               video_buffer_ video_buffer_stub.vhdl
 -- Design      : video_buffer
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xc7a100tcsg324-1

@@ -1,10 +1,10 @@
 // Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2017.2 (lin64) Build 1909853 Thu Jun 15 18:39:10 MDT 2017
-// Date        : Sun Jan  6 01:26:02 2019
+// Date        : Sun Jan  6 01:26:01 2019
 // Host        : yoshiki-FMVA77JRY running 64-bit Ubuntu 18.04.1 LTS
-// Command     : write_verilog -force -mode funcsim
-//               /home/yoshiki/xilinx/nexys4/ov7670_filter/vivado2/ov7670_sobel/ov7670_sobel.srcs/sources_1/ip/camera_buffer/camera_buffer_sim_netlist.v
+// Command     : write_verilog -force -mode funcsim -rename_top camera_buffer -prefix
+//               camera_buffer_ camera_buffer_sim_netlist.v
 // Design      : camera_buffer
 // Purpose     : This verilog netlist is a functional simulation representation of the design and should not be modified
 //               or synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -198,7 +198,6 @@ module camera_buffer
         .web(1'b0));
 endmodule
 
-(* ORIG_REF_NAME = "blk_mem_gen_generic_cstr" *) 
 module camera_buffer_blk_mem_gen_generic_cstr
    (doutb,
     clka,
@@ -233,7 +232,6 @@ module camera_buffer_blk_mem_gen_generic_cstr
         .wea(wea));
 endmodule
 
-(* ORIG_REF_NAME = "blk_mem_gen_prim_width" *) 
 module camera_buffer_blk_mem_gen_prim_width
    (doutb,
     clka,
@@ -268,7 +266,6 @@ module camera_buffer_blk_mem_gen_prim_width
         .wea(wea));
 endmodule
 
-(* ORIG_REF_NAME = "blk_mem_gen_prim_wrapper" *) 
 module camera_buffer_blk_mem_gen_prim_wrapper
    (doutb,
     clka,
@@ -516,7 +513,6 @@ module camera_buffer_blk_mem_gen_prim_wrapper
         .WEBWE({1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0}));
 endmodule
 
-(* ORIG_REF_NAME = "blk_mem_gen_top" *) 
 module camera_buffer_blk_mem_gen_top
    (doutb,
     clka,
@@ -575,7 +571,7 @@ endmodule
 (* C_USE_URAM = "0" *) (* C_WEA_WIDTH = "1" *) (* C_WEB_WIDTH = "1" *) 
 (* C_WRITE_DEPTH_A = "2560" *) (* C_WRITE_DEPTH_B = "2560" *) (* C_WRITE_MODE_A = "WRITE_FIRST" *) 
 (* C_WRITE_MODE_B = "WRITE_FIRST" *) (* C_WRITE_WIDTH_A = "8" *) (* C_WRITE_WIDTH_B = "8" *) 
-(* C_XDEVICEFAMILY = "artix7" *) (* ORIG_REF_NAME = "blk_mem_gen_v8_3_6" *) (* downgradeipidentifiedwarnings = "yes" *) 
+(* C_XDEVICEFAMILY = "artix7" *) (* downgradeipidentifiedwarnings = "yes" *) 
 module camera_buffer_blk_mem_gen_v8_3_6
    (clka,
     rsta,
@@ -789,7 +785,6 @@ module camera_buffer_blk_mem_gen_v8_3_6
         .wea(wea));
 endmodule
 
-(* ORIG_REF_NAME = "blk_mem_gen_v8_3_6_synth" *) 
 module camera_buffer_blk_mem_gen_v8_3_6_synth
    (doutb,
     clka,

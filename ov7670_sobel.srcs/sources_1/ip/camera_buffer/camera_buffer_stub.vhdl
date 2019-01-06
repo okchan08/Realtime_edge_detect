@@ -1,10 +1,10 @@
 -- Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2017.2 (lin64) Build 1909853 Thu Jun 15 18:39:10 MDT 2017
--- Date        : Sun Jan  6 01:26:02 2019
+-- Date        : Sun Jan  6 01:26:01 2019
 -- Host        : yoshiki-FMVA77JRY running 64-bit Ubuntu 18.04.1 LTS
--- Command     : write_vhdl -force -mode synth_stub
---               /home/yoshiki/xilinx/nexys4/ov7670_filter/vivado2/ov7670_sobel/ov7670_sobel.srcs/sources_1/ip/camera_buffer/camera_buffer_stub.vhdl
+-- Command     : write_vhdl -force -mode synth_stub -rename_top camera_buffer -prefix
+--               camera_buffer_ camera_buffer_stub.vhdl
 -- Design      : camera_buffer
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xc7a100tcsg324-1
