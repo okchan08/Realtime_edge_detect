@@ -31,7 +31,7 @@ module camera_capture2#(
 	input	wire	camera_h_ref,
 	input	wire	[DATA_IN_WIDTH-1:0] din,
 	output	wire	[ADDR_WIDTH-1:0] addr,
-	output	reg	[PIX_WIDTH-1:0] dout,
+	output	wire	[PIX_WIDTH-1:0] dout,
 	output	reg	wr_en
     );
 
@@ -39,6 +39,14 @@ module camera_capture2#(
 	reg [ADDR_WIDTH:0] address_next;
 	reg [1:0]	write_state;
 	reg [15:0]	latced_data;
+
+    wire [5:0] red, green;
+    wire [6:0] blue;
+
+    assign red = {1'b0, latced_data[15:11]};
+    assign green = latced_data[10:5];
+    assign blue = {1'b0, latced_data[4:0]};
+    assign dout = (red>>2) + (red>>5) + (green>>1) + (green>>4) + (blue>>4) + (blue>>5);
 
 	initial begin
 		latced_data <= 16'h0;
@@ -59,7 +67,7 @@ module camera_capture2#(
 			write_state <= 0;
             cnt <= 0;
 		end else begin
-			dout <= {latced_data[15:12], latced_data[10:7], latced_data[4:1]};
+			//rgb <= {latced_data[15:12], latced_data[10:7], latced_data[4:1]};
 			//address <= address_next;
 			//wr_en <= write_state[1];
 			write_state <= {write_state[0], (camera_h_ref & ~write_state[0])};

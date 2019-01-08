@@ -55,8 +55,9 @@
 //  Output     Output      Phase    Duty Cycle   Pk-to-Pk     Phase
 //   Clock     Freq (MHz)  (degrees)    (%)     Jitter (ps)  Error (ps)
 //----------------------------------------------------------------------------
-// clk_12MHz____12.000______0.000______50.0______476.843____322.999
-// clk_148_5MHz___148.500______0.000______50.0______298.245____322.999
+// clk_12MHz____11.995______0.000______50.0______182.550_____87.466
+// clk_148_5MHz___148.438______0.000______50.0______108.254_____87.466
+// clk_100MHz____98.958______0.000______50.0______116.618_____87.466
 //
 //----------------------------------------------------------------------------
 // Input Clock   Freq (MHz)    Input Jitter (UI)
@@ -74,6 +75,7 @@
     // Clock out ports
     .clk_12MHz(clk_12MHz),     // output clk_12MHz
     .clk_148_5MHz(clk_148_5MHz),     // output clk_148_5MHz
+    .clk_100MHz(clk_100MHz),     // output clk_100MHz
     // Status and control signals
     .reset(reset), // input reset
     .locked(locked),       // output locked
