@@ -46,6 +46,7 @@ module ov7670_sobel(
     
     wire clk_12MHz;
     wire clk_148_5MHz;
+    wire clk_6MHz;
     (* mark_debug = "true" *) wire clk_100MHz;
     
     wire [4:0] camera_red, camera_blue;
@@ -68,13 +69,18 @@ module ov7670_sobel(
     wire [16:0] video_buffer_addr;
     wire video_buffer_wr_en;
 
-    (* mark_debug = "true" *) wire gaussian_buffer_wr_en;
-    (* mark_debug = "true" *) wire [16:0] gaussian_buffer_addr;
-    (* mark_debug = "true" *) wire [11:0] gaussian_buffer_din;
+    wire gaussian_buffer_wr_en;
+    wire [16:0] gaussian_buffer_addr;
+    wire [11:0] gaussian_buffer_din;
+    (* mark_debug = "true" *) wire laplacian_buffer_wr_en;
+    (* mark_debug = "true" *) wire [16:0] laplacian_buffer_addr;
+    (* mark_debug = "true" *) wire [11:0] laplacian_buffer_din;
     wire [16:0] filter_rd_addr;
     wire [11:0] filter_rd_data;
     wire [16:0] buffer_rd_addr;
-    wire [16:0] buffer_rd_data;
+    wire [11:0] buffer_rd_data;
+    wire [16:0] gaussian_rd_addr;
+    wire [11:0] gaussian_rd_data;
     
     
     //assign video_buffer_din = filter_rd_data;
@@ -87,7 +93,7 @@ module ov7670_sobel(
     //                          (selector == 2'b11) ? {gray_data[3:0], gray_data[3:0], gray_data[3:0]} : 12'h_FFF;
     
     camera_controller camera_controller(
-        .clk(clk_12MHz),
+        .clk(clk_6MHz),
         .resend(resend_in),
         .config_done(config_done),
         .sioc(sioc),
@@ -169,23 +175,43 @@ module ov7670_sobel(
     );
 
     video_buffer1 gaussian_buffer(
-      .clka(clk_100MHz),    // input wire clka
+      .clka(clk_148_5MHz),    // input wire clka
       .wea(gaussian_buffer_wr_en),      // input wire [0 : 0] wea
       .addra(gaussian_buffer_addr[16:0]),  // input wire [18 : 0] addra
       .dina({gaussian_buffer_din[3:0], gaussian_buffer_din[3:0], gaussian_buffer_din[3:0]}),    // input wire [11 : 0] dina
+
+      .clkb(clk_148_5MHz),    // input wire clkb
+      .addrb(gaussian_rd_addr),
+      .doutb(gaussian_rd_data)  // output wire [11 : 0] doutb
+    );
+
+    video_buffer1 laplacian_buffer(
+      .clka(clk_148_5MHz),    // input wire clka
+      .wea(laplacian_buffer_wr_en),      // input wire [0 : 0] wea
+      .addra(laplacian_buffer_addr[16:0]),  // input wire [18 : 0] addra
+      .dina({laplacian_buffer_din[3:0], laplacian_buffer_din[3:0], laplacian_buffer_din[3:0]}),    // input wire [11 : 0] dina
 
       .clkb(clk_148_5MHz),    // input wire clkb
       .addrb(frame_addr),
       .doutb(buffer_data)  // output wire [11 : 0] doutb
     );
 
-    gaussian_filter(
+    gaussian_filter_55 gf(
         .clk(clk_148_5MHz),
         .data_in(buffer_rd_data),
         .rd_addr(buffer_rd_addr),
         .wr_en(gaussian_buffer_wr_en),
         .addr_out(gaussian_buffer_addr),
         .data_out(gaussian_buffer_din)
+    );
+
+    laplacian_filter_55 lf(
+        .clk(clk_148_5MHz),
+        .data_in(gaussian_rd_data),
+        .rd_addr(gaussian_rd_addr),
+        .wr_en(laplacian_buffer_wr_en),
+        .addr_out(laplacian_buffer_addr),
+        .data_out(laplacian_buffer_din)
     );
     
       clock_resource instance_name
@@ -194,6 +220,7 @@ module ov7670_sobel(
       .clk_12MHz(clk_12MHz),     // output clk_12MHz
       .clk_148_5MHz(clk_148_5MHz),     // output clk_148_5MHz
       .clk_100MHz(clk_100MHz),
+      .clk_6MHz(clk_6MHz),
       // Status and control signals
       .reset(1'b0), // input reset
       .locked(),       // output locked

@@ -56,9 +56,11 @@
 //  Output     Output      Phase    Duty Cycle   Pk-to-Pk     Phase
 //   Clock     Freq (MHz)  (degrees)    (%)     Jitter (ps)  Error (ps)
 //----------------------------------------------------------------------------
-// clk_12MHz____11.995______0.000______50.0______182.550_____87.466
-// clk_148_5MHz___148.438______0.000______50.0______108.254_____87.466
-// clk_100MHz____98.958______0.000______50.0______116.618_____87.466
+// clk_12MHz____12.001______0.000______50.0______458.663____514.587
+// clk_148_5MHz___148.512______0.000______50.0______318.631____514.587
+// clk_100MHz____99.008______0.000______50.0______336.719____514.587
+// clk_6MHz_____6.961______0.000______50.0______496.146____514.587
+// clk_24MHz____24.083______0.000______50.0______410.944____514.587
 //
 //----------------------------------------------------------------------------
 // Input Clock   Freq (MHz)    Input Jitter (UI)
@@ -67,7 +69,7 @@
 
 `timescale 1ps/1ps
 
-(* CORE_GENERATION_INFO = "clock_resource,clk_wiz_v5_4_1_0,{component_name=clock_resource,use_phase_alignment=true,use_min_o_jitter=false,use_max_i_jitter=false,use_dyn_phase_shift=false,use_inclk_switchover=false,use_dyn_reconfig=false,enable_axi=0,feedback_source=FDBK_AUTO,PRIMITIVE=MMCM,num_out_clk=3,clkin1_period=10.000,clkin2_period=10.000,use_power_down=false,use_reset=true,use_locked=true,use_inclk_stopped=false,feedback_type=SINGLE,CLOCK_MGR_TYPE=NA,manual_override=false}" *)
+(* CORE_GENERATION_INFO = "clock_resource,clk_wiz_v5_4_1_0,{component_name=clock_resource,use_phase_alignment=true,use_min_o_jitter=false,use_max_i_jitter=false,use_dyn_phase_shift=false,use_inclk_switchover=false,use_dyn_reconfig=false,enable_axi=0,feedback_source=FDBK_AUTO,PRIMITIVE=MMCM,num_out_clk=5,clkin1_period=10.000,clkin2_period=10.000,use_power_down=false,use_reset=true,use_locked=true,use_inclk_stopped=false,feedback_type=SINGLE,CLOCK_MGR_TYPE=NA,manual_override=false}" *)
 
 module clock_resource 
  (
@@ -75,6 +77,8 @@ module clock_resource
   output        clk_12MHz,
   output        clk_148_5MHz,
   output        clk_100MHz,
+  output        clk_6MHz,
+  output        clk_24MHz,
   // Status and control signals
   input         reset,
   output        locked,
@@ -88,6 +92,8 @@ module clock_resource
   .clk_12MHz(clk_12MHz),
   .clk_148_5MHz(clk_148_5MHz),
   .clk_100MHz(clk_100MHz),
+  .clk_6MHz(clk_6MHz),
+  .clk_24MHz(clk_24MHz),
   // Status and control signals               
   .reset(reset), 
   .locked(locked),
