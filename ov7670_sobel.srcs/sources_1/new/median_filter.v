@@ -1,4 +1,4 @@
-module median_filter#(
+module get_median_value#(
     parameter DATA_WIDTH = 8
 )(
     input wire [DATA_WIDTH-1:0] d0,
@@ -94,19 +94,6 @@ endfunction
 
     // divide 9 data into 3 groups of 3 elements.
     // sort 3 groups indivisually.
-        /*
-        sort_3data m0(
-            .p0(d0), .p1(d1), p2(d2), d_max(m0_max), d_med(m0_med), d_min(m0_min)
-        );
-
-        sort_3data m1(
-            .p0(d3), .p1(d4), p2(d5), d_max(m1_max), d_med(m1_med), d_min(m1_min)
-        );
-
-        sort_3data m2(
-            .p0(d6), .p1(d7), p2(d8), d_max(m2_max), d_med(m2_med), d_min(m2_min)
-        );
-        */
     assign {m0_min,m0_med,m0_max} = sort_3data_func(d0,d1,d2);
     assign {m1_min,m1_med,m1_max} = sort_3data_func(d3,d4,d5);
     assign {m2_min,m2_med,m2_max} = sort_3data_func(d6,d7,d8);
@@ -132,5 +119,183 @@ endfunction
 
     wire [DATA_WIDTH-1:0] final_max, final_min;
     assign {final_min, d_out, final_max} = sort_3data_func(x,y,z);
+
+endmodule
+
+module median_filter(
+        input wire clk,
+        input wire reset_in,
+        input wire [11:0] data_in,
+        output wire [3:0] state_out,
+        output reg [16:0] rd_addr,
+        output reg wr_en,
+        output wire [10:0] hcnt_out,
+        output wire [10:0] vcnt_out,
+        output reg [16:0] addr_out,
+        output reg [11:0] data_out
+);
+    parameter CAMERA_WIDTH = 320;
+    parameter CAMERA_HEIGHT = 240;
+    parameter DATA0 = 4'h0;
+    parameter DATA1 = 4'h1;
+    parameter DATA2 = 4'h2;
+    parameter DATA3 = 4'h3;
+    parameter DATA4 = 4'h4;
+    parameter DATA5 = 4'h5;
+    parameter DATA6 = 4'h6;
+    parameter DATA7 = 4'h7;
+    parameter DATA8 = 4'h8;
+    parameter DATA_OUT = 4'h9;
+    parameter CALC_DATA = 4'ha;
+    parameter IDLE = 4'hf;
+
+    // data contains gray scaled image. data[11:0] = {4'b0, grayscale[7:0]}
+    reg [11:0] tmp_data0;
+    reg [11:0] tmp_data1;
+    reg [11:0] tmp_data2;
+    reg [11:0] tmp_data3;
+    reg [11:0] tmp_data4;
+    reg [11:0] tmp_data5;
+    reg [11:0] tmp_data6;
+    reg [11:0] tmp_data7;
+    reg [11:0] tmp_data8;
+    reg [11:0] calc_data;
+    wire [11:0] median_value;
+
+    reg [3:0] state = 0;
+    reg [10:0] hcnt = 0;
+    reg [10:0] vcnt = 0;
+    reg [16:0] address_next;
+
+    assign state_out = state;
+    assign hcnt_out = hcnt;
+    assign vcnt_out = vcnt;
+
+    get_median_value #(
+        .DATA_WIDTH(12)
+    ) get_median_value(
+        .d0(tmp_data0),
+        .d1(tmp_data1),
+        .d2(tmp_data2),
+        .d3(tmp_data3),
+        .d4(tmp_data4),
+        .d5(tmp_data5),
+        .d6(tmp_data6),
+        .d7(tmp_data7),
+        .d8(tmp_data8),
+        .d_out(median_value)
+    );
+
+    always @(posedge clk) begin
+        if(reset_in) begin
+            wr_en <= 1'b0;
+            state <= IDLE;
+            hcnt <= 0;
+            vcnt <= 0;
+            rd_addr <= 0;
+            addr_out <= 0;
+            data_out <= 0;
+            address_next <= 0;
+        end else begin
+            case (state)
+                IDLE : begin
+                    wr_en <= 1'b0;
+                    state <= DATA0;
+                end
+
+                DATA0 : begin
+                    rd_addr <= addr_out - CAMERA_WIDTH - 1;
+                    tmp_data0 <= data_in;
+                    wr_en <= 1'b0;
+                    state <= DATA1;
+                end
+
+                DATA1 : begin
+                    rd_addr <= addr_out - CAMERA_WIDTH;
+                    tmp_data1 <= data_in;
+                    wr_en <= 1'b0;
+                    state <= DATA2;
+                end
+
+                DATA2 : begin
+                    rd_addr <= addr_out - CAMERA_WIDTH + 1;
+                    wr_en <= 1'b0;
+                    tmp_data2 <= data_in;
+                    state <= DATA3;
+                end
+
+                DATA3 : begin
+                    rd_addr <= addr_out - 1;
+                    tmp_data3 <= data_in;
+                    wr_en <= 1'b0;
+                    state <= DATA4;
+                end
+
+                DATA4 : begin
+                    rd_addr <= addr_out;
+                    tmp_data4 <= data_in;
+                    wr_en <= 1'b0;
+                    state <= DATA5;
+                end
+
+                DATA5 : begin
+                    rd_addr <= addr_out + 1;
+                    tmp_data5 <= data_in;
+                    wr_en <= 1'b0;
+                    state <= DATA6;
+                end
+
+                DATA6 : begin
+                    rd_addr <= addr_out + CAMERA_WIDTH - 1;
+                    tmp_data6 <= data_in;
+                    wr_en <= 1'b0;
+                    state <= DATA7;
+                end
+
+                DATA7 : begin
+                    rd_addr <= addr_out + CAMERA_WIDTH;
+                    tmp_data7 <= data_in;
+                    wr_en <= 1'b0;
+                    state <= DATA8;
+                end
+
+                DATA8 : begin
+                    rd_addr <= addr_out + CAMERA_WIDTH + 1;
+                    tmp_data8 <= data_in;
+                    wr_en <= 1'b0;
+                    state <= CALC_DATA;
+                end
+    
+                CALC_DATA : begin
+                    calc_data <= median_value;
+                    state <= DATA_OUT;
+                end
+
+                DATA_OUT : begin
+                    if(hcnt < CAMERA_WIDTH)
+                        hcnt <= hcnt + 1;
+                    else begin
+                        hcnt <= 0;
+                        if(vcnt < CAMERA_HEIGHT)
+                            vcnt <= vcnt + 1;
+                        else
+                            vcnt <= 0;
+                    end
+    
+                    if(addr_out < CAMERA_WIDTH*CAMERA_HEIGHT)
+                        addr_out <= addr_out + 1;   
+                    else
+                        addr_out <= 0;
+                    data_out <= calc_data;
+                    wr_en <= 1'b1;
+                    state <= DATA0;
+                end
+                default : begin
+                    wr_en <= 1'b0;
+                    state <= IDLE;
+                end
+            endcase
+        end
+    end
 
 endmodule

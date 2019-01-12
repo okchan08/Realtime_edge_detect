@@ -72,6 +72,9 @@ module ov7670_sobel(
     wire gaussian_buffer_wr_en;
     wire [16:0] gaussian_buffer_addr;
     wire [11:0] gaussian_buffer_din;
+    wire median_buffer_wr_en;
+    wire [16:0] median_buffer_addr;
+    wire [11:0] median_buffer_din;
     (* mark_debug = "true" *) wire laplacian_buffer_wr_en;
     (* mark_debug = "true" *) wire [16:0] laplacian_buffer_addr;
     (* mark_debug = "true" *) wire [11:0] laplacian_buffer_din;
@@ -81,6 +84,8 @@ module ov7670_sobel(
     wire [11:0] buffer_rd_data;
     wire [16:0] gaussian_rd_addr;
     wire [11:0] gaussian_rd_data;
+    wire [16:0] median_rd_addr;
+    wire [11:0] median_rd_data;
     
     
     //assign video_buffer_din = filter_rd_data;
@@ -185,6 +190,17 @@ module ov7670_sobel(
       .doutb(gaussian_rd_data)  // output wire [11 : 0] doutb
     );
 
+    video_buffer1 median_buffer(
+      .clka(clk_148_5MHz),    // input wire clka
+      .wea(median_buffer_wr_en),      // input wire [0 : 0] wea
+      .addra(median_buffer_addr[16:0]),  // input wire [18 : 0] addra
+      .dina({median_buffer_din[3:0], median_buffer_din[3:0], median_buffer_din[3:0]}),    // input wire [11 : 0] dina
+
+      .clkb(clk_148_5MHz),    // input wire clkb
+      .addrb(median_rd_addr),
+      .doutb(median_rd_data)  // output wire [11 : 0] doutb
+    );
+
     video_buffer1 laplacian_buffer(
       .clka(clk_148_5MHz),    // input wire clka
       .wea(laplacian_buffer_wr_en),      // input wire [0 : 0] wea
@@ -196,19 +212,30 @@ module ov7670_sobel(
       .doutb(buffer_data)  // output wire [11 : 0] doutb
     );
 
-    gaussian_filter_55 gf(
+    //gaussian_filter_55 gf(
+    //    .clk(clk_148_5MHz),
+    //    .data_in(buffer_rd_data),
+    //    .rd_addr(buffer_rd_addr),
+    //    .wr_en(gaussian_buffer_wr_en),
+    //    .addr_out(gaussian_buffer_addr),
+    //    .data_out(gaussian_buffer_din)
+    //);
+
+    median_filter mf(
         .clk(clk_148_5MHz),
         .data_in(buffer_rd_data),
         .rd_addr(buffer_rd_addr),
-        .wr_en(gaussian_buffer_wr_en),
-        .addr_out(gaussian_buffer_addr),
-        .data_out(gaussian_buffer_din)
+        .wr_en(median_buffer_wr_en),
+        .addr_out(median_buffer_addr),
+        .data_out(median_buffer_din)
     );
 
     laplacian_filter_55 lf(
         .clk(clk_148_5MHz),
-        .data_in(gaussian_rd_data),
-        .rd_addr(gaussian_rd_addr),
+        //.data_in(gaussian_rd_data),
+        //.rd_addr(gaussian_rd_addr),
+        .data_in(median_rd_data),
+        .rd_addr(median_rd_addr),
         .wr_en(laplacian_buffer_wr_en),
         .addr_out(laplacian_buffer_addr),
         .data_out(laplacian_buffer_din)
