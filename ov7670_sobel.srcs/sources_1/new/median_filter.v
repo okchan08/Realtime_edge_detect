@@ -125,14 +125,14 @@ endmodule
 module median_filter(
         input wire clk,
         input wire reset_in,
-        input wire [11:0] data_in,
+        input wire [15:0] color_data_in,
         output wire [3:0] state_out,
         output reg [16:0] rd_addr,
         output reg wr_en,
         output wire [10:0] hcnt_out,
         output wire [10:0] vcnt_out,
         output reg [16:0] addr_out,
-        output reg [11:0] data_out
+        output reg [15:0] data_out
 );
     parameter CAMERA_WIDTH = 320;
     parameter CAMERA_HEIGHT = 240;
@@ -149,18 +149,25 @@ module median_filter(
     parameter CALC_DATA = 4'ha;
     parameter IDLE = 4'hf;
 
+    wire [5:0] red, green;
+    wire [6:0] blue;
+    assign red = {1'b0, color_data_in[15:11]};
+    assign green = color_data_in[10:5];
+    assign blue = {1'b0, color_data_in[4:0]};
+    wire [15:0] data_in = (red>>2) + (red>>5) + (green>>1) + (green>>4) + (blue>>4) + (blue>>5);
+
     // data contains gray scaled image. data[11:0] = {4'b0, grayscale[7:0]}
-    reg [11:0] tmp_data0;
-    reg [11:0] tmp_data1;
-    reg [11:0] tmp_data2;
-    reg [11:0] tmp_data3;
-    reg [11:0] tmp_data4;
-    reg [11:0] tmp_data5;
-    reg [11:0] tmp_data6;
-    reg [11:0] tmp_data7;
-    reg [11:0] tmp_data8;
-    reg [11:0] calc_data;
-    wire [11:0] median_value;
+    reg [15:0] tmp_data0;
+    reg [15:0] tmp_data1;
+    reg [15:0] tmp_data2;
+    reg [15:0] tmp_data3;
+    reg [15:0] tmp_data4;
+    reg [15:0] tmp_data5;
+    reg [15:0] tmp_data6;
+    reg [15:0] tmp_data7;
+    reg [15:0] tmp_data8;
+    reg [15:0] calc_data;
+    wire [15:0] median_value;
 
     reg [3:0] state = 0;
     reg [10:0] hcnt = 0;
@@ -172,7 +179,7 @@ module median_filter(
     assign vcnt_out = vcnt;
 
     get_median_value #(
-        .DATA_WIDTH(12)
+        .DATA_WIDTH(16)
     ) get_median_value(
         .d0(tmp_data0),
         .d1(tmp_data1),

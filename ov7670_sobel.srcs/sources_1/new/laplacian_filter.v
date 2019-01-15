@@ -23,7 +23,7 @@
 module laplacian_filter(
         input wire clk,
         input wire reset_in,
-        input wire [11:0] data_in,
+        input wire [15:0] data_in,
         output wire [3:0] state_out,
         output reg [16:0] rd_addr,
         output reg wr_en,
@@ -60,7 +60,6 @@ module laplacian_filter(
     reg [11:0] tmp_data8;
     reg [11:0] calc_data;
     reg [11:0] calc0,calc1,calc2;
-    reg [11:0] calc_data_prev;
 
     reg [3:0] state = 0;
     reg [10:0] hcnt = 0;
@@ -287,34 +286,34 @@ module laplacian_filter_55(
     parameter IDLE = 8'hff;
 
     // data contains gray scaled image. data[11:0] = {4'b0, grayscale[7:0]}
-    reg [11:0] tmp_data0;
-    reg [11:0] tmp_data1;
-    reg [11:0] tmp_data2;
-    reg [11:0] tmp_data3;
-    reg [11:0] tmp_data4;
-    reg [11:0] tmp_data5;
-    reg [11:0] tmp_data6;
-    reg [11:0] tmp_data7;
-    reg [11:0] tmp_data8;
-    reg [11:0] tmp_data9;
-    reg [11:0] tmp_data10;
-    reg [11:0] tmp_data11;
-    reg [11:0] tmp_data12;
-    reg [11:0] tmp_data13;
-    reg [11:0] tmp_data14;
-    reg [11:0] tmp_data15;
-    reg [11:0] tmp_data16;
-    reg [11:0] tmp_data17;
-    reg [11:0] tmp_data18;
-    reg [11:0] tmp_data19;
-    reg [11:0] tmp_data20;
-    reg [11:0] tmp_data21;
-    reg [11:0] tmp_data22;
-    reg [11:0] tmp_data23;
-    reg [11:0] tmp_data24;
-    reg [11:0] calc_data;
+    reg [15:0] tmp_data0;
+    reg [15:0] tmp_data1;
+    reg [15:0] tmp_data2;
+    reg [15:0] tmp_data3;
+    reg [15:0] tmp_data4;
+    reg [15:0] tmp_data5;
+    reg [15:0] tmp_data6;
+    reg [15:0] tmp_data7;
+    reg [15:0] tmp_data8;
+    reg [15:0] tmp_data9;
+    reg [15:0] tmp_data10;
+    reg [15:0] tmp_data11;
+    reg [15:0] tmp_data12;
+    reg [15:0] tmp_data13;
+    reg [15:0] tmp_data14;
+    reg [15:0] tmp_data15;
+    reg [15:0] tmp_data16;
+    reg [15:0] tmp_data17;
+    reg [15:0] tmp_data18;
+    reg [15:0] tmp_data19;
+    reg [15:0] tmp_data20;
+    reg [15:0] tmp_data21;
+    reg [15:0] tmp_data22;
+    reg [15:0] tmp_data23;
+    reg [15:0] tmp_data24;
+    reg [15:0] calc_data;
     wire [3:0] calc_edge;
-    reg [11:0] calc_data_prev;
+    reg [15:0] calc_data_prev;
 
     reg [7:0] state = 0;
     reg [10:0] hcnt = 0;
@@ -325,7 +324,7 @@ module laplacian_filter_55(
     assign hcnt_out = hcnt;
     assign vcnt_out = vcnt;
     //assign calc_edge = (|calc_data[11:8]) ? 4'hf : calc_data[3:0];
-    assign calc_edge = (|calc_data[11:8]) ? 4'hf : 4'h0;
+    assign calc_edge = (|calc_data[15:10]) ? 4'hf : 4'h0;
     
 
     always @(posedge clk) begin
@@ -568,7 +567,6 @@ module laplacian_filter_55(
                     else
                         addr_out <= 0;
                     //addr_out <= hcnt + vcnt * CAMERA_WIDTH;
-                    //calc_data_prev <= calc_data;
                     data_out <= {calc_edge,calc_edge, calc_edge};
                     wr_en <= 1'b1;
                     state <= DATA0;
