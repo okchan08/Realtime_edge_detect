@@ -22,7 +22,7 @@
 
 module ov7670_sobel(
         input wire CLK,
-        (*mark_debug = "true"*) input wire pclk,
+        input wire pclk,
         input wire resend_in,
         input wire cntl_in,
         input wire [1:0] selector,
@@ -49,7 +49,7 @@ module ov7670_sobel(
     wire clk_12MHz;
     wire clk_148_5MHz;
     wire clk_6MHz;
-    (* mark_debug = "true" *) wire clk_100MHz;
+    wire clk_100MHz;
     
     wire [4:0] camera_red, camera_blue;
     wire [5:0] camera_green;
@@ -77,9 +77,9 @@ module ov7670_sobel(
     wire median_buffer_wr_en;
     wire [16:0] median_buffer_addr;
     wire [BUFF_WIDTH-1:0] median_buffer_din;
-    (* mark_debug = "true" *) wire laplacian_buffer_wr_en;
-    (* mark_debug = "true" *) wire [16:0] laplacian_buffer_addr;
-    (* mark_debug = "true" *) wire [11:0] laplacian_buffer_din;
+    wire laplacian_buffer_wr_en;
+    wire [16:0] laplacian_buffer_addr;
+    wire [11:0] laplacian_buffer_din;
     wire [16:0] filter_rd_addr;
     wire [BUFF_WIDTH-1:0] filter_rd_data;
     wire [16:0] buffer_rd_addr;
@@ -145,17 +145,6 @@ module ov7670_sobel(
       .doutb(buffer_rd_data)  // output wire [11 : 0] doutb
     );
 
-    video_buffer2 gaussian_buffer(
-      .clka(clk_148_5MHz),    // input wire clka
-      .wea(gaussian_buffer_wr_en),      // input wire [0 : 0] wea
-      .addra(gaussian_buffer_addr[16:0]),  // input wire [18 : 0] addra
-      .dina({gaussian_buffer_din[3:0], gaussian_buffer_din[3:0], gaussian_buffer_din[3:0]}),    // input wire [11 : 0] dina
-
-      .clkb(clk_148_5MHz),    // input wire clkb
-      .addrb(gaussian_rd_addr),
-      .doutb(gaussian_rd_data)  // output wire [11 : 0] doutb
-    );
-
     video_buffer1 median_buffer(
       .clka(clk_148_5MHz),    // input wire clka
       .wea(median_buffer_wr_en),      // input wire [0 : 0] wea
@@ -197,7 +186,7 @@ module ov7670_sobel(
         .data_out(laplacian_buffer_din)
     );
     
-      clock_resource instance_name
+      clock_resource clock_resource
      (
       // Clock out ports
       .clk_12MHz(clk_12MHz),     // output clk_12MHz

@@ -324,7 +324,7 @@ module laplacian_filter_55(
     assign hcnt_out = hcnt;
     assign vcnt_out = vcnt;
     //assign calc_edge = (|calc_data[11:8]) ? 4'hf : calc_data[3:0];
-    assign calc_edge = (|calc_data[15:10]) ? 4'hf : 4'h0;
+    assign calc_edge = (|calc_data[15:13]) ? 4'hf : 4'h0;
     
 
     always @(posedge clk) begin
