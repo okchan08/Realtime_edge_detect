@@ -22,7 +22,7 @@
 
 module camera_capture2#(
 	parameter ADDR_WIDTH = 19,
-	parameter PIX_WIDTH = 12,
+	parameter PIX_WIDTH = 16,
 	parameter DATA_IN_WIDTH = 8
     )
     (
@@ -69,7 +69,8 @@ module camera_capture2#(
             cnt <= 0;
 		end else begin
 			//rgb <= {latced_data[15:12], latced_data[10:7], latced_data[4:1]};
-			dout <= {latced_data[15:12], latced_data[10:7], latced_data[4:1]};
+			//dout <= {latced_data[15:12], latced_data[10:7], latced_data[4:1]};
+            dout <= latced_data;
 			//address <= address_next;
 			//wr_en <= write_state[1];
 			write_state <= {write_state[0], (camera_h_ref & ~write_state[0])};

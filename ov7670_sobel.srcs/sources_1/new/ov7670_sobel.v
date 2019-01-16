@@ -51,6 +51,7 @@ module ov7670_sobel(
     wire clk_6MHz;
     wire clk_100MHz;
     
+    wire camera_wr_en;
     wire [4:0] camera_red, camera_blue;
     wire [5:0] camera_green;
     wire [9:0] camera_hcnt;
@@ -90,14 +91,18 @@ module ov7670_sobel(
     wire [BUFF_WIDTH-1:0] median_rd_data;
     
     
-    //assign video_buffer_din = filter_rd_data;
-    assign video_buffer_addr = camera_addr;
-    assign video_buffer_din = {camera_red[3:0], camera_green[3:0], camera_blue[3:0]};
 
-    //assign video_buffer_din = (selector == 2'b00) ? {camera_red[3:0], camera_green[3:0], camera_blue[3:0]} :
-    //                          (selector == 2'b01) ? {sobel_data[3:0], sobel_data[3:0], sobel_data[3:0]} : 
-    //                          (selector == 2'b10) ? {laplc_data[3:0], laplc_data[3:0], laplc_data[3:0]} :
-    //                          (selector == 2'b11) ? {gray_data[3:0], gray_data[3:0], gray_data[3:0]} : 12'h_FFF;
+    assign video_buffer_din = (selector == 2'b00) ? {buffer_rd_data[15:12], buffer_rd_data[10:7], buffer_rd_data[4:1]} :
+                              (selector == 2'b01) ? {median_buffer_din[7:4], median_buffer_din[7:4], median_buffer_din[7:4]} :
+                              (selector == 2'b10) ? laplacian_buffer_din : 0;
+
+    assign video_buffer_addr = (selector == 2'b00) ? buffer_rd_addr :
+                               (selector == 2'b01) ? median_buffer_addr :
+                               (selector == 2'b10) ? laplacian_buffer_addr : 0;
+
+    assign video_buffer_wr_en = (selector == 2'b00) ? 1'b1 :
+                                (selector == 2'b01) ? median_buffer_wr_en :
+                                (selector == 2'b10) ? laplacian_buffer_wr_en : 0;
     
     camera_controller camera_controller(
         .clk(clk_6MHz),
@@ -117,8 +122,7 @@ module ov7670_sobel(
         .din(din),
         .addr(camera_addr),
         .dout({camera_red, camera_green, camera_blue}),
-        //.dout({camera_red, camera_green, camera_blue}),
-        .wr_en(video_buffer_wr_en)
+        .wr_en(camera_wr_en)
     );
 
     VGA VGA(
@@ -136,9 +140,9 @@ module ov7670_sobel(
     
     video_buffer1 video_buffer (
       .clka(pclk),    // input wire clka
-      .wea(video_buffer_wr_en),      // input wire [0 : 0] wea
-      .addra(video_buffer_addr),  // input wire [18 : 0] addra
-      .dina(video_buffer_din),    // input wire [11 : 0] dina
+      .wea(camera_wr_en),      // input wire [0 : 0] wea
+      .addra(camera_addr),  // input wire [18 : 0] addra
+      .dina({camera_red, camera_green, camera_blue}),    // input wire [11 : 0] dina
 
       .clkb(clk_148_5MHz),    // input wire clkb
       .addrb(buffer_rd_addr[16:0]),  // input wire [18 : 0] addrb
@@ -158,9 +162,12 @@ module ov7670_sobel(
 
     video_buffer2 laplacian_buffer(
       .clka(clk_148_5MHz),    // input wire clka
-      .wea(laplacian_buffer_wr_en),      // input wire [0 : 0] wea
-      .addra(laplacian_buffer_addr[16:0]),  // input wire [18 : 0] addra
-      .dina(laplacian_buffer_din),
+      //.wea(laplacian_buffer_wr_en),      // input wire [0 : 0] wea
+      //.addra(laplacian_buffer_addr[16:0]),  // input wire [18 : 0] addra
+      //.dina(laplacian_buffer_din),
+      .wea(video_buffer_wr_en),      // input wire [0 : 0] wea
+      .addra(video_buffer_addr[16:0]),  // input wire [18 : 0] addra
+      .dina(video_buffer_din),
 
 
       .clkb(clk_148_5MHz),    // input wire clkb
